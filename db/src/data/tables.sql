@@ -62,3 +62,32 @@ create table task_comment (
 );
 create index task_comment_user_id_index on task_comment(user_id);
 create index task_comment_task_id_index on task_comment(task_id);
+
+-- ...
+create or replace function set_updated_on() returns trigger as $$
+begin
+  new.updated_on = now();
+  return new;
+end
+$$ language plpgsql;
+
+create trigger client_set_updated_on
+before update on "client"
+for each row execute procedure set_updated_on();
+
+
+create trigger project_set_updated_on
+before update on "project"
+for each row execute procedure set_updated_on();
+
+create trigger task_set_updated_on
+before update on "task"
+for each row execute procedure set_updated_on();
+
+create trigger task_comment_set_updated_on
+before update on "task_comment"
+for each row execute procedure set_updated_on();
+
+create trigger project_comment_set_updated_on
+before update on "project_comment"
+for each row execute procedure set_updated_on();
