@@ -75,9 +75,30 @@ local function on_init()
     -- print "on_init called"
 end
 
+
+local function check_filters()
+    local blacklist = {
+        projects_name_like = true
+    }
+    local table = ngx.var.uri:gsub('/internal/rest/', '')
+    
+    local args = ngx.req.get_uri_args()
+    for key, val in pairs(args) do
+        local column = key;
+        local operator, value = val:match("([^.]+)%.(.*)")
+        if operator and blacklist[ table .. '_' .. column .. '_' .. operator ] then
+            ngx.status = ngx.HTTP_BAD_REQUEST 
+            ngx.say('filtering by ' .. column .. '/' .. operator .. ' is not allowed')
+            ngx.exit(ngx.HTTP_OK)
+        end
+    end
+end
+
+
 local function on_rest_request()
     -- print "on_rest_request called"
     session_cookie.run()
+    check_filters()
 end
 
 local function before_rest_response()
