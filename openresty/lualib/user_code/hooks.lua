@@ -71,8 +71,7 @@ local function check_filters()
     local blacklist = {
         projects_name_like = true
     }
-    local table = ngx.var.uri:gsub('/internal/rest/', '')
-    
+    local table = ngx.var.uri:gsub('/', '')
     local args = ngx.req.get_uri_args()
     for key, val in pairs(args) do
         local column = key;

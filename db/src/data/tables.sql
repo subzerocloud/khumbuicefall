@@ -91,7 +91,3 @@ for each row execute procedure set_updated_on();
 create trigger project_comment_set_updated_on
 before update on "project_comment"
 for each row execute procedure set_updated_on();
-
-create trigger send_change_event
-after insert or update or delete on "user"
-for each row execute procedure rabbitmq.on_row_change();
