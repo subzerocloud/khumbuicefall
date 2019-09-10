@@ -19,7 +19,7 @@ COPY data.user (id,name,email,"password") FROM STDIN (FREEZE ON);
 -- fill table data.todo (6)
 \echo # filling table data.todo (6)
 COPY data.todo (id,todo,private,owner_id) FROM STDIN (FREEZE ON);
-1	updated	FALSE	1
+1	item_1	FALSE	1
 2	item_2	TRUE	1
 3	item_3	FALSE	1
 4	item_4	TRUE	2

@@ -42,7 +42,8 @@ services:
       - PGRST_DB_URI=postgres://${DB_USER}:${DB_PASS}@${DB_HOST}:${DB_PORT}/${DB_NAME}
       - PGRST_DB_SCHEMA=${DB_SCHEMA} 
       - PGRST_DB_ANON_ROLE=${DB_ANON_ROLE}
-      - PGRST_DB_POOL=${DB_POOL} 
+      - PGRST_DB_POOL=${DB_POOL}
+      - PGRST_DB_POOL_TIMEOUT=${PGRST_DB_POOL_TIMEOUT}
       - PGRST_JWT_SECRET=${JWT_SECRET}  
       - PGRST_MAX_ROWS=${MAX_ROWS} 
       - PGRST_PRE_REQUEST=${PRE_REQUEST}
@@ -56,13 +57,13 @@ services:
   # to PostgREST down the stack.
   openresty:
     image: subzerocloud/openresty
+    command: ["/usr/bin/openresty", "-g", "daemon off; error_log /dev/stderr info;"]
     ports:
       - "8080:80"
     links:
       - db:db
       - postgrest:postgrest
       - rabbitmq:rabbitmq
-    entrypoint: /entrypoint.sh
     environment:
       - JWT_SECRET=${JWT_SECRET}
       - DEVELOPMENT=${DEVELOPMENT}
@@ -74,11 +75,11 @@ services:
       - DB_SCHEMA=${DB_SCHEMA}
       - DB_USER=${DB_USER}
       - DB_PASS=${DB_PASS}
+      - ENABLE_CACHE=${ENABLE_CACHE}
       - RELAY_ID_COLUMN=${RELAY_ID_COLUMN}
       - RABBITMQ_HOST=${RABBITMQ_HOST}
       - RABBITMQ_PORT=${RABBITMQ_PORT}
     volumes:
-      - "./openresty/entrypoint.sh:/entrypoint.sh"
       - "./openresty/nginx/conf/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf"
       - "./openresty/nginx/conf/includes:/usr/local/openresty/nginx/conf/includes"
       - "./openresty/nginx/html:/usr/local/openresty/nginx/html"
